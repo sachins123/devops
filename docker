@@ -1,0 +1,15 @@
+docker:- 
+
+apt install docker.io 
+docker pull ubuntu
+docker images
+docker run -itd --name test ubuntu
+docker ps
+docker exec -it test bash
+
+
+docker run -d  -p 81:80 ubuntu
+sudo docker run --name testsite -p 81:80 -t -i ubuntu:18.04 /bin/bash
+
+
+docker run  -it --name test -p 81:80 ubuntu /bash
