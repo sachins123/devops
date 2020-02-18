@@ -110,3 +110,64 @@ WantedBy=multi-user.target
 
 
 https://github.com/vipin-k/HashiCorp-Vault
+
+-------------------------------------------------------------------------------------------------
+
+
+wget https://releases.hashicorp.com/vault/1.3.2/vault_1.3.2_linux_amd64.zip
+unzip vault_1.3.2_linux_amd64.zip -d /usr/local/bin/
+
+mkdir /etc/vault-helper.d/
+
+# generate config for helper
+cat << EOF > /etc/vault-helper.d/config.hcl
+vault_addr = "https://vault.clienturls.com"
+ssh_mount_point = "ssh"
+tls_skip_verify = false
+allowed_roles = "*"
+allowed_cidr_list="0.0.0.0/0"
+EOF
+
+# disable common-auth
+sed -i -e 's/^@include common-auth/#@include common-auth/g' /etc/pam.d/sshd
+echo "auth requisite pam_exec.so quiet expose_authtok log=/tmp/vaultssh.log /usr/local/bin/vault-ssh-helper -config=/etc/vault-helper.d/config.hcl" | tee -a /etc/pam.d/sshd
+echo "auth optional pam_unix.so not_set_pass use_first_pass nodelay" | tee -a /etc/pam.d/sshd
+
+
+# enable ChallengeResponseAuthentication
+sed -i -e 's/ChallengeResponseAuthentication no/ChallengeResponseAuthentication yes/g' /etc/ssh/sshd_config
+sed -i -e 's/UsePAM no/UsePAM yes/g' /etc/ssh/sshd_config
+sed -i -e 's/PasswordAuthentication yes/PasswordAuthentication no/g' /etc/ssh/sshd_config
+systemctl restart sshd
+
+
+
+
+
+
+
+export VAULT_ADDR='https://vault.clienturls.com'
+
+vault login
+
+enter your token
+
+
+vault write ssh/creds/otp_key_role ip=IP_OF_CLIENT_NODE
+
+Than try to access client machine. 
+
+ssh ubuntu@IP_OF_CLIENT_NODE
+
+password: 
+
+go to https://vault.clienturls.com/
+enter token s.3fkFYrla3I1KBVnuvy1rxyjk
+
+go to ssh >> otp_key_role
+
+enter your username and ip of client machine and hit on generate
+
+
+
+
