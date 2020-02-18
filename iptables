@@ -1,0 +1,14 @@
+iptables:-
+
+
+iptables -L -n -v
+
+iptables -L INPUT --line-numbers                                        (to check rule by serial no.)
+                                                                     
+sudo iptables -A INPUT -s 15.15.15.51 -j DROP                            (block  particuler ip)
+	
+sudo iptables -A INPUT -p tcp --dport 22 -j ACCEPT                        (accept port)
+
+sudo iptables -D INPUT 3                                                 (delete rule by no)  
+
+iptables -A INPUT -p tcp -is  1.2.3.4 --dport 80 -j DROP                   (drop ip with port)
