@@ -1,0 +1,122 @@
+
+
+https://www.decodingdevops.com/how-to-install-ansible-on-aws-ec2-instances/
+
+
+https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-ansible-on-ubuntu-18-04
+
+
+---------------------------------------------------------------------------------	
+
+Installation
+cmds:-
+
+sudo -i 
+apt-get install python-minimal 
+apt-get install python3
+python --version
+sudo -i 
+apt-get update 
+apt-get install software-properties-common 
+apt-add-repository ppa:ansible/ansible 
+apt-get update 
+apt-get install ansible
+ansible --version
+
+generating id_rsa.pub  public key in ansible master instance:-
+
+sudo –i 
+ssh-keygen -t rsa
+cd .ssh
+ls 
+id_rsa  id_rsa.pub known_hosts 
+cat id_rsa.pub	
+
+In All Client Ec2 Instances:-
+
+Sudo -i
+cd .ssh
+ls
+Here you can see the authorized_keys file.   [If the file is not existed here create the file with touch command
+touch authorized_keys  and paste the id_rsa.pub key in this file
+Vi  authorized_keys
+
+Adding clients to ansible master
+to add clients to ansible master machine, we need to add all IP’s of clients in master machine /etc/ansible/hosts file
+
+cd /etc/ansible
+vi hosts
+add like below
+{
+[server name]
+"private/public ip"
+}
+
+ansible -m ping all
+ansible-inventory --list -y
+ansible all -m ping -u "user"
+
+ansible "servers" -a "uptime" -u "user"
+ansible server1:server2 -m ping -u "user"
+
+----------------------------------------------------------------------------------------------------------
+
+
+ansible-galaxy init lamp --offline
+
+
+ansible local -m setup -i local.ini 
+
+
+
+
+
+
+----------------------------------------------------------++++++++++++++++++++++++++++++______------------------------
+
+
+
+---
+- hosts: client
+  become: true
+  vars_files:
+    - /root/lamp/vars/main.yml
+
+  tasks:
+
+  #Apache Configuration
+    - name: Install LAMP Packages
+      apt: name=apache2,mysql-server,php7.2,python-mysqldb,phpmyadmin,php-fpm,ufw  update_cache=yes state=latest
+      
+
+    - name: Create document root
+      file:
+        path: /var/www/html
+        state: directory
+        owner: ubuntu
+        mode: '0755'
+
+
+  # MySQL Configuration
+    #- name: Sets the root password
+     # mysql_user:
+      #  name: root
+       # password: 12345
+
+  # UFW Configuration
+    - name: "UFW - Allow HTTP and SSH port no 80,22"
+      ufw:
+        rule: allow
+        port: "80,22"
+        proto: tcp
+
+  handlers:
+    - name: Reload Apache
+      service:
+        name: apache2
+        state: reloaded
+
+    - name: Restart Apache
+      service:
+        name: apache2
+        state: restarted
