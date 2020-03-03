@@ -1,0 +1,37 @@
+installing teraform and creating the ec2 instance :-
+
+sudo apt-get install unzip
+wget https://releases.hashicorp.com/terraform/0.11.8/terraform_0.11.8_linux_amd64.zip
+unzip terraform_0.11.8_linux_amd64.zip
+sudo mv terraform /usr/local/bin/
+terraform --version
+sudo apt-get update
+sudo apt-get 
+install python pip
+pip install awscli
+aws --version
+aws configure
+
+create a file xyx.tf anywhere
+
+write script in it to create a sample ec2:-
+
+------------------------------------------------------------------------
+provider "aws" {
+  region = "us-east-2"
+}
+resource "aws_instance" "web" {
+  ami           = "ami-0fc20dd1da406780b"
+  instance_type = "t2.micro"
+  key_name ="sachin"
+  associate_public_ip_address = "true"
+  tags = {
+    Name = "HelloWorld"
+  }
+}
+-----------------------------------------------------------------------------
+terraform init
+terraform  apply
+
++++complete+++
+more commands are advance concept
