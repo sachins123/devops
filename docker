@@ -17,3 +17,7 @@ docker run  -it --name test -p 81:80 ubuntu /bash
 
 
 docker start 79b3fa70b51d docker exec -it 79b3fa70b51d \bin\sh
+
+--------------------------------------------------------------------------------------
+docker run -dit -p 80:80 b9b177acda13
+docker cp test c95d2b7de189:/var/www/html     ---- to copy file,folder in docker
